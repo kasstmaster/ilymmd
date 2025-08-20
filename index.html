@@ -1,86 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ILYMMD+</title>
+
+  <!-- Critical for mobile scaling + safe areas (notches/home bar) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
   <style>
+    :root{
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+
     /* Reset & base */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       width: 100%;
-      overflow: hidden;
+      overflow: hidden;            /* let Jellyfin handle its own scrolling */
       font-family: system-ui, sans-serif;
+      background: #000;
+      color: #fff;
     }
 
     /* Fullscreen Jellyfin */
-    iframe {
-      position: absolute;
+    iframe.frame {
+      position: fixed;
       inset: 0;
       width: 100%;
-      height: 100%;
+      height: 100vh;              /* fallback */
+      height: 100svh;             /* small viewport on mobile */
+      height: 100dvh;             /* dynamic viewport on supported browsers */
       border: none;
       z-index: 1;
     }
 
     /* Logo overlay (top-left) */
     .logo-overlay {
-      position: absolute;
-      top: 0;         /* lock to the very top */
-      left: 0;        /* lock to the very left */
-      width: 200px;   /* make it bigger than Jellyfin's logo area */
-      height: 70px;
-      background: #10161f url('https://i.postimg.cc/90kcP451/Chat-GPT-Image-Aug-20-2025-01-24-22-AM.png') no-repeat center/contain;
-      background-color: #10161f;  /* solid fill so nothing bleeds through */
-      z-index: 2;
-      pointer-events: none;
+      position: fixed;
+      top: calc(8px + var(--safe-top));
+      left: 8px;
+      width: min(48vw, 200px);
+      height: 60px;
+      background: #141414 url('https://i.postimg.cc/90kcP451/Chat-GPT-Image-Aug-20-2025-01-24-22-AM.png') no-repeat center/contain;
+      z-index: 3;
+      pointer-events: none;       /* don't block taps to Jellyfin */
+      opacity: 0.98;
+      border-radius: 8px;
     }
 
-    /* Bottom bar (from ILYMMD+ app) */
+    /* Bottom bar */
     .bottom-bar {
       position: fixed;
-      bottom: 0; left: 0;
-      width: 100%;
-      background: #000;
+      left: 0;
+      right: 0;
+      bottom: calc(6px + var(--safe-bottom));
+      margin: 0 auto;
+      max-width: 980px;
+      height: 52px;
+      padding: 0 10px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
       display: flex;
       justify-content: space-around;
-      padding: 10px 0;
-      border-top: 1px solid #222;
-      z-index: 9999;
-    }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      color: #fff;
-      font-size: 40px;
-      cursor: pointer;
+      z-index: 4;
     }
-    .nav-item i { font-size: 56px; margin-bottom: 8px; }
-    .nav-item:hover { color: #aaa; }
+
+    .nav-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+    }
+
+    .nav-item:active { opacity: .75; }
+
+    /* Mobile tweaks */
+    @media (max-width: 480px) {
+      .logo-overlay {
+        width: min(60vw, 160px);
+        height: 48px;
+        top: calc(10px + var(--safe-top));
+        left: 10px;
+      }
+      .bottom-bar {
+        height: 46px;
+        gap: 8px;
+      }
+      .nav-item { font-size: 14px; padding: 8px 8px; }
+      .nav-item i { font-size: 18px; }
+    }
+
+    /* Very short screens: hide bottom bar to avoid covering Jellyfin controls */
+    @media (max-height: 540px) {
+      .bottom-bar { display: none; }
+    }
   </style>
 </head>
 <body>
-  <!-- Replace with your Cloudflare Tunnel domain -->
-  <iframe src="https://media.ilymmd.com/web/index.html#/home.html" allowfullscreen></iframe>
+  <!-- Use your tunnel domain (works on mobile) -->
+  <iframe
+    class="frame"
+    src="https://media.ilymmd.com/web/index.html#/home.html"
+    allowfullscreen
+    loading="eager"
+    referrerpolicy="no-referrer">
+  </iframe>
 
   <!-- Overlays -->
-  <div class="logo-overlay"></div>
+  <div class="logo-overlay" aria-hidden="true"></div>
 
-  <!-- Bottom Nav (from Jellyfin app) -->
-  <div class="bottom-bar">
-    <div class="nav-item">
-      <i class="fa-solid fa-house"></i>
-      <span>Available</span>
-    </div>
-    <div class="nav-item">
-      <i class="fa-solid fa-film"></i>
-      <span>Explore</span>
-    </div>
+  <!-- Bottom Nav -->
+  <div class="bottom-bar" role="navigation" aria-label="Overlay navigation">
+    <a class="nav-item" href="#" onclick="goto('home');return false;">
+      <i class="fa-solid fa-house"></i><span>Available</span>
+    </a>
+    <a class="nav-item" href="#" onclick="goto('explore');return false;">
+      <i class="fa-solid fa-film"></i><span>Explore</span>
+    </a>
   </div>
 
   <!-- Font Awesome for icons -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+
+  <script>
+    // Simple router: swap Jellyfin routes when tapping nav (optional)
+    function goto(section) {
+      const f = document.querySelector('iframe.frame');
+      if (!f) return;
+      switch (section) {
+        case 'home':
+          f.src = 'https://media.ilymmd.com/web/index.html#/home.html';
+          break;
+        case 'explore':
+          // adjust to your preferred Jellyfin view/collection
+          f.src = 'https://media.ilymmd.com/web/index.html#/movies.html';
+          break;
+      }
+    }
+
+    // iOS Safari quirk: keep iframe’s height equal to true viewport after rotate
+    const syncHeight = () => {
+      document.querySelector('iframe.frame').style.height = `${window.innerHeight}px`;
+    };
+    window.addEventListener('orientationchange', () => setTimeout(syncHeight, 100));
+  </script>
 </body>
 </html>
