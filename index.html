@@ -54,9 +54,8 @@
     /* Bottom bar */
     .bottom-bar {
       position: fixed;
-      left: 0;
-      right: 0;
       bottom: calc(env(safe-area-inset-bottom, 0px));
+      left: 0;
       width: 100%;
       background: #000;
       display: flex;
@@ -64,33 +63,26 @@
       padding: 10px 0;
       border-top: 1px solid #222;
       z-index: 9999;
+    }
     
-      /* mobile “fixed” stability */
-      transform: translateZ(0);
-      will-change: transform;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      contain: layout paint;
-    }
-
+    /* Nav item — icon stacked over label */
     .nav-item {
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
       color: #fff;
-      font-size: 16px;
-      line-height: 1;
-      font-weight: 600;
+      font-size: 40px;        /* label size to match app mobile base */
       cursor: pointer;
-      user-select: none;
-      padding: 8px 10px;
-      border-radius: 8px;
       text-decoration: none;
+      user-select: none;
     }
-
+    
     .nav-item i {
-      font-size: 20px;
+      font-size: 56px;        /* icon size to match app mobile base */
+      margin-bottom: 8px;
     }
+    
+    .nav-item:hover { color: #aaa; }
 
     .nav-item:active { opacity: .75; }
 
