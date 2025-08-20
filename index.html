@@ -56,18 +56,21 @@
       position: fixed;
       left: 0;
       right: 0;
-      bottom: calc(6px + var(--safe-bottom));
-      margin: 0 auto;
-      max-width: 980px;
-      height: 52px;
-      padding: 0 10px;
-      border-radius: 12px;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
+      bottom: calc(env(safe-area-inset-bottom, 0px));
+      width: 100%;
+      background: #000;
       display: flex;
       justify-content: space-around;
-      align-items: center;
-      z-index: 4;
+      padding: 10px 0;
+      border-top: 1px solid #222;
+      z-index: 9999;
+    
+      /* mobile “fixed” stability */
+      transform: translateZ(0);
+      will-change: transform;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      contain: layout paint;
     }
 
     .nav-item {
