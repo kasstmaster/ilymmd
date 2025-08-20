@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Jellyfin Overlay</title>
+  <title>ILYMMD+</title>
   <style>
     /* Reset & base */
     html, body {
@@ -36,31 +36,28 @@
       pointer-events: none; /* so clicks go through to Jellyfin */
     }
 
-    /* Navbar (bottom) */
-    .navbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
+    /* Bottom bar (from ILYMMD+ app) */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0; left: 0;
       width: 100%;
-      height: 56px;
-      background: rgba(0, 0, 0, 0.75);
+      background: #000;
       display: flex;
-      justify-content: center;
-      gap: 2rem;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #222;
+      z-index: 9999;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      z-index: 3;
+      color: #fff;
+      font-size: 40px;
+      cursor: pointer;
     }
-
-    .navbar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s ease;
-    }
-
-    .navbar a:hover {
-      color: #4dabf7;
-    }
+    .nav-item i { font-size: 56px; margin-bottom: 8px; }
+    .nav-item:hover { color: #aaa; }
   </style>
 </head>
 <body>
@@ -69,10 +66,28 @@
 
   <!-- Overlays -->
   <div class="logo-overlay"></div>
-  <div class="navbar">
-    <a href="#">Home</a>
-    <a href="#">Movies</a>
-    <a href="#">TV</a>
+
+  <!-- Bottom Nav (from Jellyfin app) -->
+  <div class="bottom-bar">
+    <div class="nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </div>
+    <div class="nav-item">
+      <i class="fa-solid fa-film"></i>
+      <span>Movies</span>
+    </div>
+    <div class="nav-item">
+      <i class="fa-solid fa-tv"></i>
+      <span>TV</span>
+    </div>
+    <div class="nav-item" id="switchProfileBtn" role="button" tabindex="0" aria-label="Switch Profile">
+      <img id="currentProfileIcon" alt="Profile" style="display:none;width:40px;height:40px;object-fit:cover;border-radius:50%;margin-bottom:5px;">
+      <span id="currentProfileName">Profile</span>
+    </div>
   </div>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
 </body>
 </html>
