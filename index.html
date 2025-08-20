@@ -27,13 +27,14 @@
     /* Logo overlay (top-left) */
     .logo-overlay {
       position: absolute;
-      top: 16px;
-      left: 16px;
-      width: 140px;
-      height: 48px;
-      background: url('https://i.postimg.cc/90kcP451/Chat-GPT-Image-Aug-20-2025-01-24-22-AM.png') no-repeat center/contain;
+      top: 0;         /* lock to the very top */
+      left: 0;        /* lock to the very left */
+      width: 200px;   /* make it bigger than Jellyfin's logo area */
+      height: 100px;  /* tall enough to cover */
+      background: #141414 url('https://i.postimg.cc/90kcP451/Chat-GPT-Image-Aug-20-2025-01-24-22-AM.png') no-repeat center/contain;
+      background-color: #141414;  /* solid fill so nothing bleeds through */
       z-index: 2;
-      pointer-events: none; /* so clicks go through to Jellyfin */
+      pointer-events: none;
     }
 
     /* Bottom bar (from ILYMMD+ app) */
