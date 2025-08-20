@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ILYMMD+ Portal</title>
+  <style>
+    :root{
+      --bg:#0b0c10;            /* page background */
+      --ink:#e7e8ea;           /* text */
+      --muted:#9aa0a6;         /* secondary text */
+      --accent:#c045ff;        /* highlight color */
+      --bar-h:64px;            /* bottom bar height */
+      --radius:16px;           /* rounding */
+      --overlay-w:160px;       /* top-left logo overlay width */
+      --overlay-h:48px;        /* top-left logo overlay height */
+      --overlay-x:16px;        /* distance from left edge */
+      --overlay-y:12px;        /* distance from top edge */
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;}
+    .app{position:fixed;inset:0;display:flex;flex-direction:column}
+    .stage{position:relative;flex:1;min-height:0}
+    iframe{position:absolute;inset:0 0 var(--bar-h) 0;width:100%;height:calc(100% - var(--bar-h));border:0;background:#000}
+    /* Top overlay that sits above the iframe to hide Jellyfin logo area */
+    .brand-overlay{position:absolute;left:var(--overlay-x);top:var(--overlay-y);width:var(--overlay-w);height:var(--overlay-h);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:12px;backdrop-filter:saturate(130%) blur(2px);background:rgba(11,12,16,0.35);box-shadow:0 6px 20px rgba(0,0,0,.35);pointer-events:none}
+    .brand-overlay img{max-width:100%;max-height:100%;object-fit:contain}
+    .brand-overlay .text{font-weight:800;letter-spacing:.5px}
+
+    /* Bottom nav */
+    .bar{position:absolute;left:0;right:0;bottom:0;height:var(--bar-h);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px;background:linear-gradient(180deg, rgba(5,5,7,0) 0%, rgba(5,5,7,.6) 20%, rgba(5,5,7,.9) 100%);backdrop-filter:saturate(120%) blur(6px)}
+    .btn{display:flex;gap:10px;align-items:center;justify-content:center;border-radius:var(--radius);border:1px solid rgba(231,232,234,.12);background:rgba(231,232,234,.06);color:var(--ink);font-weight:700;letter-spacing:.25px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+    .btn span.small{font-weight:600;opacity:.9}
+    .btn[aria-current="page"]{background:rgba(192,69,255,.18);border-color:rgba(192,69,255,.55);box-shadow:0 0 0 2px rgba(192,69,255,.18) inset}
+    .btn:active{transform:translateY(1px)}
+
+    /* Responsive tweaks */
+    @media (max-width:640px){
+      :root{--bar-h:72px;--overlay-w:130px;--overlay-h:42px;--overlay-x:10px;--overlay-y:8px}
+      .btn{font-size:15px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="stage">
+      <!--
+        ▼ Replace the src values below with your real, HTTPS URLs.
+        - AVAILABLE = Jellyfin (reverse-proxied path recommended, e.g. https://yourdomain.tld/jellyfin/web/index.html)
+        - EXPLORE   = Jellyseerr (e.g. https://yourdomain.tld/jellyseerr)
+      -->
+      <iframe id="view" title="ILYMMD+ View" allowfullscreen
+              src="https://example.com/jellyfin/web/index.html"></iframe>
+
+      <!-- Brand overlay hides Jellyfin's built-in logo area. Use an <img> or text. -->
+      <div class="brand-overlay" id="brand">
+        <!-- If you have a logo image, uncomment and set src: -->
+        <!-- <img src="https://yourcdn.tld/ilymmd-plus-logo.png" alt="ILYMMD+"/> -->
+        <div class="text">ILYMMD+</div>
+      </div>
+
+      <nav class="bar" role="navigation" aria-label="Primary">
+        <button class="btn" id="tab-available" aria-current="page" data-href="https://example.com/jellyfin/web/index.html">
+          Available
+          <span class="small">(Jellyfin)</span>
+        </button>
+        <button class="btn" id="tab-explore" data-href="https://example.com/jellyseerr">
+          Explore
+          <span class="small">(Jellyseerr)</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const iframe = document.getElementById('view');
+      const tabs = [
+        document.getElementById('tab-available'),
+        document.getElementById('tab-explore')
+      ];
+
+      // restore last tab
+      const saved = localStorage.getItem('ilymmd.tab');
+      if (saved === 'explore') select(tabs[1]);
+
+      tabs.forEach(btn => btn.addEventListener('click', () => select(btn)));
+
+      function select(btn){
+        tabs.forEach(b => b.setAttribute('aria-current', b === btn ? 'page' : 'false'));
+        const url = btn.getAttribute('data-href');
+        if (url && iframe.src !== url) iframe.src = url;
+        localStorage.setItem('ilymmd.tab', btn.id === 'tab-explore' ? 'explore' : 'available');
+      }
+    })();
+  </script>
+</body>
+</html>
