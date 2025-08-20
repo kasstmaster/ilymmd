@@ -122,39 +122,55 @@
   <div class="logo-overlay" aria-hidden="true"></div>
 
   <!-- Bottom Nav -->
-  <div class="bottom-bar" role="navigation" aria-label="Overlay navigation">
-    <a class="nav-item" href="#" onclick="goto('home');return false;">
-      <i class="fa-solid fa-house"></i><span>Available</span>
-    </a>
-    <a class="nav-item" href="#" onclick="goto('explore');return false;">
-      <i class="fa-solid fa-film"></i><span>Explore</span>
-    </a>
-  </div>
+<div class="bottom-bar" role="navigation" aria-label="Overlay navigation">
+  <a id="nav-home" class="nav-item" href="#" onclick="goto('home');return false;">
+    <i class="fa-solid fa-house"></i><span>Available</span>
+  </a>
+  <a id="nav-explore" class="nav-item" href="#" onclick="goto('explore');return false;">
+    <i class="fa-solid fa-film"></i><span>Explore</span>
+  </a>
+</div>
 
-  <!-- Font Awesome for icons -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+<style>
+  /* highlight active tab */
+  .nav-item.active { color: #44d1ff; }
+</style>
 
-  <script>
-    // Simple router: swap Jellyfin routes when tapping nav (optional)
-    function goto(section) {
-      const f = document.querySelector('iframe.frame');
-      if (!f) return;
-      switch (section) {
-        case 'home':
-          f.src = 'https://media.ilymmd.com/web/index.html#/home.html';
-          break;
-        case 'explore':
-          // adjust to your preferred Jellyfin view/collection
-          f.src = 'https://media.ilymmd.com/web/index.html#/movies.html';
-          break;
-      }
+<script>
+  const JELLYFIN_HOME   = 'https://media.ilymmd.com/web/index.html#/home.html';
+  const JELLYSEERR_URL  = 'https://your-jellyseerr-domain.example.com'; // 👈 replace with your URL
+
+  function setActive(id) {
+    document.querySelectorAll('.nav-item').forEach(a => a.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  function goto(section) {
+    const f = document.querySelector('iframe.frame');
+    if (!f) return;
+
+    switch (section) {
+      case 'home':
+        f.src = JELLYFIN_HOME;
+        setActive('nav-home');
+        break;
+      case 'explore':
+        f.src = JELLYSEERR_URL;
+        setActive('nav-explore');
+        break;
     }
+  }
 
-    // iOS Safari quirk: keep iframe’s height equal to true viewport after rotate
-    const syncHeight = () => {
-      document.querySelector('iframe.frame').style.height = `${window.innerHeight}px`;
-    };
-    window.addEventListener('orientationchange', () => setTimeout(syncHeight, 100));
-  </script>
+  // iOS Safari quirk: keep iframe’s height equal to true viewport after rotate
+  const syncHeight = () => {
+    document.querySelector('iframe.frame').style.height = `${window.innerHeight}px`;
+  };
+  window.addEventListener('orientationchange', () => setTimeout(syncHeight, 100));
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setActive('nav-home');
+  });
+</script>
 </body>
 </html>
