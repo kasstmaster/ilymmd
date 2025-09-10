@@ -58,79 +58,83 @@
     <section class="hero">
       <img src="https://i.postimg.cc/C5mdsHGY/ilymmd.png" alt="ILYMMD+ Logo" />
       <div>
-        <p class="small">Follow the steps below to connect your TV to our Jellyfin server.</p>
+        <p class="small">Follow the steps below to watch with Plex and request new titles through Jellyseerr.</p>
       </div>
     </section>
 
     <section class="card">
-      <h2>Server Address</h2>
+      <h2>Plex (Watching)</h2>
+      <p>On your TV, phone, or computer, open the Plex app and sign in with your Plex account. Remote access is built in — you don't need a server URL.</p>
       <div class="server-box">
-        <span>Use this server URL:</span>
-        <code class="server-url" id="srv">https://ilymmd.tail9854e5.ts.net</code>
-        <button class="btn" id="copy">Copy</button>
+        <span>Plex Web App:</span>
+        <code class="server-url" id="plex">https://app.plex.tv</code>
+        <button class="btn" id="copyPlex">Copy</button>
       </div>
-      <p class="small">Type it exactly as shown, including https://</p>
+      <p class="small">If you’re on a TV, install the Plex app from your device’s app store and sign in.</p>
     </section>
 
     <section class="card">
-      <h2>Android TV / Google TV (most Smart TVs) & Fire TV</h2>
-        <li>Open the <strong>Play Store</strong> (or Amazon Appstore on Fire TV) and install <strong>Jellyfin</strong>.</li>
-        <li>Open Jellyfin → choose <strong>Add Server</strong> (or <strong>Manually add</strong>).</li>
-        <li>Enter the server URL: <code class="server-url" id="srv">https://ilymmd.tail9854e5.ts.net</code></li>
-        <li>Select <strong>Next</strong> → log in with your account (we'll provide it if needed).</li>
-        <li>You're in! Browse your libraries and start watching.</li>
+      <h2>Requesting New Titles (Jellyseerr)</h2>
+      <p>Use Jellyseerr on your phone, tablet, or computer. Open the link below, search for a title, and tap <strong>Request</strong>. Requests don’t work from TV apps.</p>
+      <div class="server-box">
+        <span>Jellyseerr URL:</span>
+        <code class="server-url" id="jelly">https://discover.ilymmd.com</code>
+        <button class="btn" id="copyJelly">Copy</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Android TV / Google TV / Fire TV (Plex)</h2>
+        <li>Open the Play Store (or Amazon Appstore on Fire TV) and install <strong>Plex</strong>.</li>
+        <li>Open Plex and sign in with your Plex account.</li>
+        <li>Go to “Home” and you should see our library after you’re shared in.</li>
       <details>
         <summary>Troubleshooting tips</summary>
         <ul>
-          <li><strong>Cannot connect?</strong> Double‑check the URL has <code>https://</code> and no typos.</li>
-          <li><strong>Clock mismatch:</strong> Make sure your TV's date/time is correct (TLS needs accurate time).</li>
-          <li><strong>Network limits:</strong> Hotel/guest Wi‑Fi can block streaming ports. Try another network or your home Wi‑Fi.</li>
-          <li><strong>Still stuck?</strong> Restart the TV and the Jellyfin app, then try again.</li>
+          <li><strong>Can't see the library?</strong> Sign out/in again, then open “Sources” and check that our server is selected.</li>
+          <li><strong>Clock mismatch:</strong> Make sure your device’s date/time is correct (secure connections need accurate time).</li>
+          <li><strong>Network limits:</strong> Some guest/hotel Wi-Fi blocks streaming. Try another network or your home Wi-Fi.</li>
         </ul>
       </details>
     </section>
 
     <section class="card">
-      <h2>Roku</h2>
-        <li>On your Roku, open the <strong>Channel Store</strong> and install <strong>Jellyfin</strong>.</li>
-        <li>Open Jellyfin → choose <strong>Sign in</strong> → <strong>Enter server manually</strong>.</li>
-        <li>Type the server: <code>https://ilymmd.tail9854e5.ts.net</code> and continue.</li>
-        <li>Log in with your account to finish setup.</li>
+      <h2>Roku (Plex)</h2>
+        <li>From the Channel Store, install <strong>Plex</strong>.</li>
+        <li>Open Plex, choose <strong>Sign In</strong>, and follow the code pairing on your phone or at <code>https://app.plex.tv</code>.</li>
+        <li>Once signed in, our shared library will appear automatically.</li>
       <details>
         <summary>Troubleshooting tips</summary>
         <ul>
-          <li><strong>Connection failed?</strong> Re‑enter the URL carefully; Roku's on‑screen keyboard loves to drop the <code>s</code> in <code>https</code>.</li>
-          <li><strong>Update apps:</strong> Settings → System → System update → Check now, then retry Jellyfin.</li>
+          <li><strong>No library?</strong> Make sure you’re signed in with the correct Plex account that has been shared to.</li>
+          <li><strong>Update apps:</strong> Settings → System → System update → Check now, then reopen Plex.</li>
         </ul>
       </details>
-    </section>
-
-    <section class="card">
-      <h2>Requesting New Titles</h2>
-      <p>
-        Use <a href="https://discover.tail9854e5.ts.net" target="_blank" rel="noopener">Discover</a> on your phone, tablet, or computer. Search for a title and tap <strong>Request</strong>.
-        Requests do <em>not</em> work from TV apps.
-      </p>
     </section>
 
     <footer>
-      <p>Need help? Take a photo of your TV screen and send it to us. We'll get you connected fast.</p>
+      <p>Need help? Take a photo of your screen and send it to us. We'll get you connected fast.</p>
     </footer>
   </main>
 
   <script>
-    document.getElementById('copy')?.addEventListener('click', async () => {
-      const url = document.getElementById('srv').textContent.trim();
-      try {
-        await navigator.clipboard.writeText(url);
-        const btn = document.getElementById('copy');
-        const old = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(()=>btn.textContent=old, 1500);
-      } catch(e) {
-        alert('Copy failed. Please select and copy the URL manually.');
-      }
-    });
+    const copyBtn = (btnId, codeId) => {
+      document.getElementById(btnId)?.addEventListener('click', async () => {
+        const url = document.getElementById(codeId).textContent.trim();
+        try {
+          await navigator.clipboard.writeText(url);
+          const btn = document.getElementById(btnId);
+          const old = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(()=>btn.textContent=old, 1500);
+        } catch(e) {
+          alert('Copy failed. Please select and copy the URL manually.');
+        }
+      });
+    };
+
+    copyBtn('copyPlex', 'plex');
+    copyBtn('copyJelly', 'jelly');
   </script>
 </body>
 </html>
